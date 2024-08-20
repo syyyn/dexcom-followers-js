@@ -85,7 +85,7 @@ class GlucoseReading {
     }
 }
 
-class DexcomFollowers {
+export class DexcomFollowers {
 
     base_url = null
     session = null
