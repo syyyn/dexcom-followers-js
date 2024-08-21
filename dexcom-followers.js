@@ -25,7 +25,6 @@ import {
     SessionErrorEnum
 } from "./errors.js"
 
-const re = new RegExp("[^0-9]")
 
 function valid_uuid(uuid) {
     return validateUuid(uuid)
@@ -38,7 +37,8 @@ class GlucoseReading {
             this._value = jsonGlucoseReading['Value']
             this._trend_direction = jsonGlucoseReading['Trend']
             this._trend = DEXCOM_TREND_DIRECTIONS[this._trend_direction]
-            this._datetime = new DateTime(re.exec(jsonGlucoseReading['WT'])).toString()
+            let formatWT = (jsonGlucoseReading['WT']).substring(5, jsonGlucoseReading['DT'].length - 1)
+            this._datetime = new Date(parseInt(formatWT)).toLocaleString()
         } catch (error) {
             throw new ArgumentError(ArgumentErrorEnum.GLUCOSE_READING_INVALID)
         }
@@ -148,8 +148,7 @@ export class DexcomFollowers {
         } else {
             response = await this.session.post(
                 `${this.base_url}/${endpoint}`,
-                jsonData,
-                {headers: {'Accept-Encoding': 'application/json'}}
+                jsonData
             )
         }
         try {
